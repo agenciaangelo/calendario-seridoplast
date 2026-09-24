@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seridóplast · Calendário de Publicações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#DA1F26; --red-d:#B4171D; --red-soft:#FDECEC;
+  --ink:#33343A; --ink-2:#45464D; --charcoal:#2B2C31;
+  --yellow:#F9C400; --yellow-d:#E0AE00; --yellow-soft:#FFF7DB;
+  --bg:#F4F4F6; --card:#FFFFFF; --line:#E7E7EC; --line-2:#EFEFF3;
+  --muted:#8A8B93; --muted-2:#B4B5BD; --text:#33343A;
+  --green:#1F9D63; --green-soft:#E4F6EC; --blue:#2F6FED; --blue-soft:#E9F0FE;
+  --orange:#C4571E; --orange-soft:#FDEEE6;
+  --radius:14px; --sh:0 1px 2px rgba(20,20,30,.04),0 6px 18px rgba(20,20,30,.05);
+  --sh-lg:0 10px 40px rgba(20,20,30,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top,0)}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-thumb{background:#d9d9e0;border-radius:20px;border:3px solid var(--bg)}
+.app{max-width:1200px;margin:0 auto;padding:18px 20px 60px}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;flex-direction:column}
+.brand .wm{font-weight:800;font-size:19px;letter-spacing:-.3px;color:var(--ink)}
+.brand .wm b{color:var(--red)}
+.brand .sub{font-size:12.5px;color:var(--muted);margin-top:1px}
+.tb-spacer{flex:1}
+.seg{display:inline-flex;background:var(--line-2);border:1px solid var(--line);border-radius:11px;padding:3px}
+.seg button{font-size:12.5px;font-weight:600;color:var(--ink-2);padding:7px 12px;border-radius:8px;transition:.13s;white-space:nowrap}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(20,20,30,.08)}
+.icon-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:11px;display:grid;place-items:center;background:var(--card);color:var(--ink-2);transition:.13s}
+.icon-btn:hover{background:var(--line-2)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-weight:600;font-size:13px;padding:10px 15px;border-radius:10px;transition:.14s;box-shadow:0 1px 2px rgba(218,31,38,.25)}
+.btn:hover{background:var(--red-d)}
+.btn svg{stroke:#fff}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.ghost:hover{background:var(--line-2)}
+.btn.ghost svg{stroke:var(--ink-2)}
+.btn.sm{padding:7px 11px;font-size:12px}
+
+/* Chips & pills */
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.chip.ink{background:#ECECEF;color:var(--ink-2)}
+.chip.fmt{background:#EFEAFB;color:#6B46C1}
+.chip.ig{background:#FCE7F0;color:#C13584}
+.chip.natal{background:var(--blue-soft);color:var(--blue)}
+.chip.cc{background:var(--orange-soft);color:var(--orange)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px}
+.pill.postado{background:var(--green-soft);color:var(--green)}
+.pill.agendado{background:var(--blue-soft);color:var(--blue)}
+.pill.atrasado{background:var(--red-soft);color:var(--red-d)}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor}
+
+/* Overdue banner */
+.banner{background:linear-gradient(180deg,#FFF4F4,#FDECEC);border:1px solid #F6CCCE;border-radius:14px;padding:14px 16px;margin-bottom:16px}
+.banner .bh{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--red-d);font-size:14px;margin-bottom:9px}
+.banner .bh svg{stroke:var(--red-d)}
+.banner .list{display:flex;flex-direction:column;gap:7px}
+.brow{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #F3D6D7;border-radius:10px;padding:8px 11px;flex-wrap:wrap}
+.brow .bd{font-weight:700;font-size:12px;color:var(--red-d);min-width:52px}
+.brow .bt{font-weight:600;font-size:13px;flex:1;min-width:120px}
+.brow .go{font-size:11.5px;font-weight:700;color:var(--red-d);text-decoration:underline;cursor:pointer}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:1fr 372px;gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh)}
+
+/* Calendar */
+.cal{padding:10px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 14px;gap:10px;flex-wrap:wrap}
+.cal-head .mo{font-size:17px;font-weight:800;text-transform:capitalize}
+.cal-nav{display:flex;gap:6px;align-items:center}
+.cal-nav button{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;color:var(--ink-2)}
+.cal-nav button:hover{background:var(--line-2)}
+.cal-nav .today-btn{width:auto;padding:0 12px;font-size:12.5px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dow{text-align:center;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding-bottom:4px}
+.cell{position:relative;min-height:104px;border:1px solid var(--line-2);border-radius:10px;padding:6px 7px;background:#fff;cursor:pointer;transition:.12s;overflow:hidden}
+.cell:hover{border-color:var(--muted-2)}
+.cell.out{background:#FAFAFB;color:var(--muted-2);cursor:default}
+.cell.out:hover{border-color:var(--line-2)}
+.cell.today .dn{background:var(--red);color:#fff}
+.cell.sel{border-color:var(--red);box-shadow:0 0 0 1.5px var(--red) inset}
+.cell .dn{width:23px;height:23px;display:grid;place-items:center;font-size:12px;font-weight:700;border-radius:7px;margin-bottom:4px}
+.cell .add{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:6px;background:var(--red-soft);color:var(--red-d);display:none;place-items:center;font-size:15px;line-height:1}
+.cell:hover .add{display:grid}
+.ev{font-size:10.5px;font-weight:600;padding:3px 6px;border-radius:6px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px}
+.ev.postado{background:var(--green-soft);color:var(--green)}
+.ev.agendado{background:var(--blue-soft);color:var(--blue)}
+.ev.atrasado{background:var(--red-soft);color:var(--red-d)}
+.ev.postado.dot::before{content:"✓";font-weight:800}
+.ev .more{color:var(--muted);font-weight:700}
+.legend{display:flex;gap:16px;padding:14px 8px 4px;font-size:12px;font-weight:600;flex-wrap:wrap}
+.dotpill{display:inline-flex;align-items:center;gap:6px}
+.dotpill i{width:9px;height:9px;border-radius:3px;display:inline-block}
+
+/* Day panel */
+.day-panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh);overflow:hidden;position:sticky;top:14px}
+.dp-head{padding:16px 16px 14px;border-bottom:1px solid var(--line)}
+.dp-head .wd{font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px}
+.dp-head .dd{font-size:20px;font-weight:800;letter-spacing:-.4px;margin-top:2px}
+.dp-head .hint{margin-top:8px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dp-body{padding:14px 16px;max-height:60vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.post{border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+.post.done{background:#FBFDFB;border-color:#DCEFE3}
+.post .prow1{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.post .hora{font-weight:800;font-size:14px}
+.post .prow1 .pill{margin-left:auto}
+.post .pt{font-weight:600;font-size:13.5px;line-height:1.4}
+.post.done .pt{color:var(--muted);text-decoration:line-through}
+.post .obs{font-size:12px;color:var(--muted);margin-top:3px}
+.post .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.post .pacts{display:flex;align-items:center;gap:8px;margin-top:11px;padding-top:10px;border-top:1px dashed var(--line)}
+.check{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:7px 11px;border-radius:9px;border:1px solid var(--line);color:var(--ink-2);transition:.13s}
+.check:hover{background:var(--line-2)}
+.check.on{background:var(--green);color:#fff;border-color:var(--green)}
+.check.on:hover{background:var(--green)}
+.check .box{width:16px;height:16px;border:1.8px solid currentColor;border-radius:5px;display:grid;place-items:center}
+.check.on .box{background:transparent;border-color:#fff}
+.iact{width:32px;height:32px;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;color:var(--muted)}
+.iact:hover{background:var(--line-2);color:var(--ink)}
+.iact.del:hover{background:var(--red-soft);color:var(--red-d);border-color:#F3D6D7}
+.dp-empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:13px}
+.dp-foot{padding:12px 16px;border-top:1px solid var(--line)}
+.dp-foot .btn{width:100%;justify-content:center}
+
+/* Tabs */
+.tabs{display:inline-flex;background:var(--line-2);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:16px}
+.tab{font-size:13.5px;font-weight:600;color:var(--ink-2);padding:8px 18px;border-radius:9px;transition:.13s}
+.tab.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(20,20,30,.08)}
+
+/* Resultados */
+.res-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.res-nav{display:flex;align-items:center;gap:8px;margin-left:auto}
+.res-nav button{width:36px;height:36px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;color:var(--ink-2);background:var(--card)}
+.res-nav button:hover{background:var(--line-2)}
+.res-period{font-weight:800;font-size:15px;min-width:170px;text-align:center;text-transform:capitalize}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--sh)}
+.tile .n{font-size:25px;font-weight:800;letter-spacing:-.6px;line-height:1}
+.tile .l{font-size:12px;color:var(--muted);margin-top:6px;font-weight:500}
+.tile .s{font-size:11.5px;font-weight:700;margin-top:5px}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--sh)}
+.rcard h3{font-size:12.5px;font-weight:800;margin-bottom:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-2)}
+.brk{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.brk .bl{font-weight:600;font-size:12.5px;min-width:66px}
+.bar{flex:1;height:8px;background:var(--line-2);border-radius:20px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:20px}
+.brk .bv{font-weight:700;font-size:12.5px;min-width:70px;text-align:right}
+.foll{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.foll .big{font-size:32px;font-weight:800;letter-spacing:-.8px;line-height:1}
+.foll .delta{font-weight:800;font-size:14px}
+.foll-note{font-size:12px;color:var(--muted);margin-top:8px}
+.toppost{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13px}
+.toppost:first-of-type{border-top:none}
+.toppost .tt{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toppost .tv{margin-left:auto;font-weight:800;white-space:nowrap}
+.res-empty{color:var(--muted);font-size:13px;padding:6px 0}
+.metrics-line{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-top:9px;font-weight:600;align-items:center}
+.metrics-line b{color:var(--ink)}
+.metrics-line a{color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+
+/* Loader */
+#loader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:rgba(244,244,246,.86);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:opacity .25s ease}
+#loader.hide{opacity:0;pointer-events:none;visibility:hidden}
+body.locked{overflow:hidden}
+#loader .box{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 38px;box-shadow:var(--sh-lg);max-width:340px}
+#loader .spin{width:42px;height:42px;border-radius:50%;border:3.5px solid var(--red-soft);border-top-color:var(--red);animation:ldspin .8s linear infinite}
+@keyframes ldspin{to{transform:rotate(360deg)}}
+#loader .ltext{font-weight:600;font-size:14px;color:var(--ink)}
+#loader .lsub{font-size:12px;color:var(--muted);margin-top:-8px;line-height:1.5}
+#loader .lerr{display:none}
+#loader.error .spin{display:none}
+#loader.error .lerr{display:block}
+#loader.error .ltext{color:var(--red-d)}
+#loader .retry{margin-top:4px;background:var(--red);color:#fff;font-weight:600;font-size:13px;padding:9px 18px;border-radius:10px}
+#loader .retry:hover{background:var(--red-d)}
+
+/* Overlay / modal */
+.overlay{position:fixed;inset:0;background:rgba(20,20,30,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
+.overlay.show{display:flex}
+.modal{background:var(--card);border-radius:18px;box-shadow:var(--sh-lg);width:100%;max-width:520px;animation:pop .2s ease;max-height:92vh;display:flex;flex-direction:column}
+@keyframes pop{from{transform:scale(.97);opacity:0}to{transform:scale(1);opacity:1}}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+.mhead .t{font-size:17px;font-weight:800}
+.mclose{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--muted)}
+.mclose:hover{background:var(--line-2)}
+.mbody{padding:20px 22px;overflow-y:auto}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;outline:none;background:#fff}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.checkline{display:flex;align-items:center;gap:9px;background:var(--line-2);border-radius:10px;padding:11px 13px;cursor:pointer;user-select:none}
+.checkline input{width:18px;height:18px;accent-color:var(--green)}
+.checkline span{font-size:13px;font-weight:600}
+.mfoot{padding:15px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);color:#fff;font-weight:600;font-size:13px;padding:11px 20px;border-radius:12px;z-index:10000;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .day-panel{position:static}
+  .cell{min-height:80px}
+  .cell .dn{width:21px;height:21px}
+  .ev{font-size:10px}
+  .brand .sub{display:none}
+}
+@media(max-width:640px){
+  .tiles{grid-template-columns:1fr 1fr}
+  .res-grid{grid-template-columns:1fr}
+  .res-period{min-width:130px;font-size:14px}
+}
+@media(max-width:520px){
+  .app{padding:14px 12px 50px}
+  .cell{min-height:66px;padding:4px 4px}
+  .ev{padding:2px 4px}
+  .grid{gap:4px}
+}
+</style>
+</head>
+<body class="locked">
+
+<!-- Tela de carregamento — trava a interface enquanto busca/grava no Sheets -->
+<div id="loader">
+  <div class="box">
+    <div class="spin"></div>
+    <div class="ltext" id="loaderText">Carregando publicações…</div>
+    <div class="lsub" id="loaderSub">Buscando informações no Google Sheets.</div>
+    <div class="lerr"><button class="retry" onclick="loadData()">Tentar novamente</button></div>
+  </div>
+</div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="wm">Seridó<b>plast</b> · Publicações</div>
+      <div class="sub">Calendário de conteúdo — Instagram</div>
+    </div>
+    <div class="tb-spacer"></div>
+    <div class="seg" id="teamFilter">
+      <button class="on" data-team="all">Todas</button>
+      <button data-team="Natal">Natal</button>
+      <button data-team="Cruzeta e Caicó">Cruzeta e Caicó</button>
+    </div>
+    <button class="icon-btn" onclick="loadData()" title="Atualizar do Sheets"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></button>
+    <button class="btn" onclick="openPostModal(selDate)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Nova publicação</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on" data-screen="cal" onclick="showScreen('cal')">Calendário</button>
+    <button class="tab" data-screen="res" onclick="showScreen('res')">Resultados</button>
+  </div>
+
+  <div id="calView">
+  <div id="overdueBanner"></div>
+
+  <div class="layout">
+    <section class="card cal">
+      <div class="cal-head">
+        <div class="mo" id="calMonth"></div>
+        <div class="cal-nav">
+          <button class="today-btn" onclick="goToday()">Hoje</button>
+          <button onclick="calMove(-1)" title="Mês anterior"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+          <button onclick="calMove(1)" title="Próximo mês"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        </div>
+      </div>
+      <div class="grid" id="calGrid"></div>
+      <div class="legend">
+        <span class="dotpill"><i style="background:var(--blue)"></i>Agendado</span>
+        <span class="dotpill"><i style="background:var(--green)"></i>Postado</span>
+        <span class="dotpill"><i style="background:var(--red)"></i>Atrasado / não postado</span>
+      </div>
+    </section>
+
+    <aside class="day-panel" id="dayPanel"></aside>
+  </div>
+  </div><!-- /calView -->
+
+  <div id="resView" style="display:none"></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeOverlay()"></div>
+
+<script>
+/* ================================================================
+   FONTE DE DADOS — Google Sheets via Web App do Apps Script
+   ================================================================ */
+const API_URL = 'https://script.google.com/macros/s/AKfycbzbL0qQ2BQAx2Lkws9m2GnSQbxfbqvN88IS2lTtZCJEcIJUg6-WhM1r7qZkZr3SU8Gsnw/exec';
+
+/* ---------------- Estado ---------------- */
+let POSTS = [];
+let FOLLOWERS = [];
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+let viewY = TODAY.getFullYear(), viewM = TODAY.getMonth();
+let selDate = ymd(TODAY);
+let teamFilter = 'all';
+let screen = 'cal';               // 'cal' | 'res'
+let resPeriod = 'mes';            // 'semana' | 'mes'
+let resAnchor = ymd(TODAY);       // data dentro do período em foco
+
+const $ = s => document.querySelector(s);
+const MON = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const DOW = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DOW_FULL = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+
+/* ---------------- Helpers ---------------- */
+function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function parseYmd(s){const [y,m,d]=String(s).split('-').map(Number);const dt=new Date(y,m-1,d);dt.setHours(0,0,0,0);return dt;}
+function statusOf(p){
+  if(p.postado) return 'postado';
+  return parseYmd(p.data) < TODAY ? 'atrasado' : 'agendado';
+}
+function teamOfDay(dateStr){
+  const wd = parseYmd(dateStr).getDay();
+  if(wd===1||wd===3||wd===5) return 'Natal';
+  if(wd===2||wd===4||wd===6) return 'Cruzeta e Caicó';
+  return 'ambas';
+}
+function teamChip(t){
+  if(t==='Natal') return '<span class="chip natal">Natal</span>';
+  if(t==='Cruzeta e Caicó') return '<span class="chip cc">Cruzeta e Caicó</span>';
+  return `<span class="chip ink">${esc(t)||'—'}</span>`;
+}
+function postsOn(dateStr){
+  return POSTS.filter(p=>p.data===dateStr && (teamFilter==='all'||p.equipe===teamFilter))
+    .sort((a,b)=>String(a.hora||'').localeCompare(String(b.hora||'')));
+}
+
+/* ---------------- Trava / loading ---------------- */
+function lock(msg,sub){const l=$('#loader');l.classList.remove('hide','error');$('#loaderText').textContent=msg||'Carregando…';$('#loaderSub').textContent=sub||'';$('#loaderSub').style.display=sub===''?'none':'block';document.body.classList.add('locked');}
+function unlock(){$('#loader').classList.add('hide');document.body.classList.remove('locked');}
+function lockError(msg){const l=$('#loader');l.classList.remove('hide');l.classList.add('error');$('#loaderText').textContent='Não foi possível carregar';$('#loaderSub').textContent=msg||'Verifique a conexão e tente novamente.';$('#loaderSub').style.display='block';document.body.classList.add('locked');}
+function toast(msg,isError){const t=document.createElement('div');t.className='toast';t.style.background=isError?'#B4171D':'#1F9D63';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2600);}
+
+/* ---------------- Carga do Sheets ---------------- */
+async function loadData(){
+  lock('Carregando publicações…','Buscando informações no Google Sheets.');
+  try{
+    if(!API_URL) throw new Error('Defina a constante API_URL com a URL do seu Web App (Apps Script).');
+    const res = await fetch(API_URL,{method:'GET'});
+    if(!res.ok) throw new Error('O servidor respondeu com erro '+res.status+'.');
+    const d = await res.json();
+    if(d && d.error) throw new Error(d.error);
+    POSTS = (d.posts||[]).map(p=>({...p,
+      postado: p.postado===true || String(p.postado).toUpperCase()==='TRUE',
+      views: +p.views||0, alcance: +p.alcance||0, link: p.link||''}));
+    FOLLOWERS = (d.followers||[]).map(f=>({data:f.data, quantidade:+f.quantidade||0}))
+      .sort((a,b)=>a.data<b.data?-1:1);
+    renderAll();
+    unlock();
+  }catch(err){ console.error(err); lockError(err.message); }
+}
+
+/* ---------------- Gravação ---------------- */
+async function apiPost(action,payload){
+  if(!API_URL) return {ok:true,local:true};
+  const res = await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,payload})});
+  if(!res.ok) throw new Error('Erro '+res.status+' ao salvar.');
+  const d = await res.json();
+  if(d && d.error) throw new Error(d.error);
+  return d;
+}
+async function saving(fn,okMsg){
+  lock('Salvando…','Gravando no Google Sheets.');
+  try{ await fn(); unlock(); if(okMsg) toast(okMsg); }
+  catch(err){ console.error(err); unlock(); toast('⚠️ '+(err.message||'Não foi possível salvar'),true); throw err; }
+}
+
+/* ---------------- Render ---------------- */
+function renderAll(){ renderBanner(); renderCalendar(); renderDayPanel(); if(screen==='res') renderResults(); }
+function nf(n){ return (Number(n)||0).toLocaleString('pt-BR'); }
+
+function showScreen(s){
+  screen=s;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.screen===s));
+  $('#calView').style.display = s==='cal'?'':'none';
+  $('#resView').style.display = s==='res'?'':'none';
+  if(s==='res') renderResults();
+}
+
+function renderBanner(){
+  const atr = POSTS.filter(p=>statusOf(p)==='atrasado' && (teamFilter==='all'||p.equipe===teamFilter))
+    .sort((a,b)=>a.data.localeCompare(b.data));
+  const box = $('#overdueBanner');
+  if(!atr.length){ box.innerHTML=''; return; }
+  box.innerHTML = `<div class="banner">
+    <div class="bh">${icoAlert()} ${atr.length} ${atr.length===1?'publicação atrasada':'publicações atrasadas'} — ainda não postada${atr.length===1?'':'s'}</div>
+    <div class="list">${atr.map(p=>{
+      const d=parseYmd(p.data);
+      return `<div class="brow">
+        <span class="bd">${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}</span>
+        <span class="bt">${esc(p.titulo)} · ${esc(p.formato)}</span>
+        ${teamChip(p.equipe)}
+        <span class="go" onclick="jumpTo('${p.data}')">ver dia</span>
+        <button class="check sm" onclick="togglePost('${p.id}',true)"><span class="box">${icoCheck(11)}</span>Marcar postado</button>
+      </div>`;
+    }).join('')}</div>
+  </div>`;
+}
+
+function renderCalendar(){
+  $('#calMonth').textContent = MON[viewM]+' '+viewY;
+  const first=new Date(viewY,viewM,1), start=first.getDay(), days=new Date(viewY,viewM+1,0).getDate();
+  const prevDays=new Date(viewY,viewM,0).getDate();
+  let html = DOW.map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<42;i++){
+    let dn,cls='cell',dateStr=null;
+    if(i<start){dn=prevDays-start+1+i;cls='cell out';}
+    else if(i>=start+days){dn=i-start-days+1;cls='cell out';}
+    else{
+      dn=i-start+1;
+      dateStr=`${viewY}-${String(viewM+1).padStart(2,'0')}-${String(dn).padStart(2,'0')}`;
+      if(dateStr===ymd(TODAY)) cls+=' today';
+      if(dateStr===selDate) cls+=' sel';
+    }
+    if(!dateStr){ html+=`<div class="${cls}"><div class="dn">${dn}</div></div>`; continue; }
+    const list=postsOn(dateStr);
+    const shown=list.slice(0,3).map(p=>{
+      const st=statusOf(p);
+      return `<div class="ev ${st} ${st==='postado'?'dot':''}">${p.hora?esc(p.hora)+' ':''}${esc(p.titulo)}</div>`;
+    }).join('');
+    const more=list.length>3?`<div class="ev"><span class="more">+${list.length-3} mais</span></div>`:'';
+    html+=`<div class="${cls}" onclick="selectDay('${dateStr}')">
+      <div class="dn">${dn}</div>
+      <button class="add" title="Nova publicação" onclick="event.stopPropagation();openPostModal('${dateStr}')">+</button>
+      ${shown}${more}</div>`;
+  }
+  $('#calGrid').innerHTML=html;
+}
+
+function renderDayPanel(){
+  const d=parseYmd(selDate);
+  const list=postsOn(selDate);
+  const tod=teamOfDay(selDate);
+  const hint = tod==='ambas'
+    ? 'Domingo — ambas as equipes podem postar'
+    : `Dia sugerido para a equipe <b>${tod}</b>`;
+  let body;
+  if(!list.length){
+    body=`<div class="dp-empty">Nenhuma publicação para este dia.<br>Toque em “Nova publicação” para agendar.</div>`;
+  }else{
+    body=list.map(p=>{
+      const st=statusOf(p);
+      const stLabel={postado:'Postado',agendado:'Agendado',atrasado:'Atrasado'}[st];
+      return `<div class="post ${p.postado?'done':''}">
+        <div class="prow1">
+          <span class="hora">${esc(p.hora)||'--:--'}</span>
+          <span class="pill ${st}"><i></i>${stLabel}</span>
+        </div>
+        <div class="pt">${esc(p.titulo)}</div>
+        ${p.obs?`<div class="obs">${esc(p.obs)}</div>`:''}
+        <div class="chips"><span class="chip fmt">${esc(p.formato)}</span><span class="chip ig">${esc(p.rede)||'Instagram'}</span>${teamChip(p.equipe)}</div>
+        ${(p.views||p.alcance||p.link)?`<div class="metrics-line">
+          ${p.views?`<span>👁 <b>${nf(p.views)}</b> views</span>`:''}
+          ${p.alcance?`<span>📣 <b>${nf(p.alcance)}</b> alcance</span>`:''}
+          ${p.link?`<a href="${esc(p.link)}" target="_blank" rel="noopener">abrir post ↗</a>`:''}
+        </div>`:''}
+        <div class="pacts">
+          <button class="check ${p.postado?'on':''}" onclick="togglePost('${p.id}',${!p.postado})">
+            <span class="box">${p.postado?icoCheck(11):''}</span>${p.postado?'Postado':'Marcar como postado'}
+          </button>
+          <div style="flex:1"></div>
+          <button class="iact" title="Editar" onclick="openPostModal('${p.data}','${p.id}')">${icoEdit()}</button>
+          <button class="iact del" title="Excluir" onclick="deletePost('${p.id}')">${icoTrash()}</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  $('#dayPanel').innerHTML=`
+    <div class="dp-head">
+      <div class="wd">${DOW_FULL[d.getDay()]}</div>
+      <div class="dd">${String(d.getDate()).padStart(2,'0')} de ${MON[d.getMonth()]}</div>
+      <div class="hint">${icoUsers()}<span>${hint}</span></div>
+    </div>
+    <div class="dp-body">${body}</div>
+    <div class="dp-foot"><button class="btn" onclick="openPostModal('${selDate}')">${icoPlus()} Nova publicação neste dia</button></div>`;
+}
+
+/* ---------------- Interações ---------------- */
+function selectDay(dateStr){ selDate=dateStr; renderCalendar(); renderDayPanel();
+  if(window.innerWidth<=900) $('#dayPanel').scrollIntoView({behavior:'smooth',block:'start'}); }
+function jumpTo(dateStr){ const d=parseYmd(dateStr); viewY=d.getFullYear(); viewM=d.getMonth(); selectDay(dateStr); }
+function calMove(n){ viewM+=n; if(viewM<0){viewM=11;viewY--;} if(viewM>11){viewM=0;viewY++;} renderCalendar(); }
+function goToday(){ viewY=TODAY.getFullYear(); viewM=TODAY.getMonth(); selectDay(ymd(TODAY)); }
+
+document.querySelectorAll('#teamFilter button').forEach(b=>b.onclick=()=>{
+  $('#teamFilter .on').classList.remove('on'); b.classList.add('on'); teamFilter=b.dataset.team; renderAll();
+});
+
+/* ---------------- Resultados ---------------- */
+function periodRange(){
+  const a=parseYmd(resAnchor);
+  if(resPeriod==='semana'){
+    const s=new Date(a); s.setDate(a.getDate()-a.getDay());
+    const e=new Date(s); e.setDate(s.getDate()+6);
+    const dm=x=>`${String(x.getDate()).padStart(2,'0')}/${String(x.getMonth()+1).padStart(2,'0')}`;
+    return {start:ymd(s), end:ymd(e), label:`${dm(s)} a ${dm(e)}`};
+  }
+  const s=new Date(a.getFullYear(),a.getMonth(),1), e=new Date(a.getFullYear(),a.getMonth()+1,0);
+  return {start:ymd(s), end:ymd(e), label:`${MON[a.getMonth()]} de ${a.getFullYear()}`};
+}
+function resMove(n){ const a=parseYmd(resAnchor); if(resPeriod==='semana') a.setDate(a.getDate()+7*n); else a.setMonth(a.getMonth()+n); resAnchor=ymd(a); renderResults(); }
+function setResPeriod(p){ resPeriod=p; renderResults(); }
+function follAt(dateStr){ let v=null; for(const f of FOLLOWERS){ if(f.data<=dateStr) v=f.quantidade; } return v; }
+function prevDay(dateStr){ const d=parseYmd(dateStr); d.setDate(d.getDate()-1); return ymd(d); }
+
+function renderResults(){
+  const {start,end,label}=periodRange();
+  const inRange=POSTS.filter(p=>p.data>=start&&p.data<=end&&(teamFilter==='all'||p.equipe===teamFilter));
+  const postados=inRange.filter(p=>p.postado);
+  const atrasadas=inRange.filter(p=>statusOf(p)==='atrasado').length;
+  const totalViews=postados.reduce((s,p)=>s+(p.views||0),0);
+  const totalReach=postados.reduce((s,p)=>s+(p.alcance||0),0);
+  const byFmt=['Reels','Stories'].map(f=>{const l=inRange.filter(p=>p.formato===f);return {f,total:l.length,post:l.filter(p=>p.postado).length,views:l.reduce((s,p)=>s+(p.views||0),0)};});
+  const maxFmtViews=Math.max(1,...byFmt.map(x=>x.views));
+  const teams=['Natal','Cruzeta e Caicó'];
+  const byTeam=teams.map(t=>{const l=inRange.filter(p=>p.equipe===t);return {t,total:l.length,post:l.filter(p=>p.postado).length};});
+  const maxTeam=Math.max(1,...byTeam.map(x=>x.total));
+  const top=postados.filter(p=>p.views>0).sort((a,b)=>b.views-a.views).slice(0,5);
+  const base=follAt(prevDay(start)), fim=follAt(end), atual=FOLLOWERS.length?FOLLOWERS[FOLLOWERS.length-1].quantidade:null;
+  const delta=(base!=null&&fim!=null)?fim-base:null;
+  const teamColor={'Natal':'var(--blue)','Cruzeta e Caicó':'var(--orange)'};
+
+  $('#resView').innerHTML=`
+    <div class="res-head">
+      <div class="seg">
+        <button class="${resPeriod==='semana'?'on':''}" onclick="setResPeriod('semana')">Semana</button>
+        <button class="${resPeriod==='mes'?'on':''}" onclick="setResPeriod('mes')">Mês</button>
+      </div>
+      <div class="res-nav">
+        <button onclick="resMove(-1)" title="Anterior">${chevL()}</button>
+        <div class="res-period">${label}</div>
+        <button onclick="resMove(1)" title="Próximo">${chevR()}</button>
+      </div>
+    </div>
+
+    <div class="tiles">
+      <div class="tile"><div class="n">${postados.length}<span style="font-size:15px;color:var(--muted);font-weight:700">/${inRange.length}</span></div><div class="l">Publicadas / previstas</div>${atrasadas?`<div class="s" style="color:var(--red-d)">${atrasadas} atrasada${atrasadas>1?'s':''}</div>`:`<div class="s" style="color:var(--green)">em dia</div>`}</div>
+      <div class="tile"><div class="n">${nf(totalViews)}</div><div class="l">Visualizações (Reels/Feed)</div></div>
+      <div class="tile"><div class="n">${nf(totalReach)}</div><div class="l">Alcance total</div></div>
+      <div class="tile"><div class="n">${atual!=null?nf(atual):'—'}</div><div class="l">Seguidores</div>${delta!=null?`<div class="s" style="color:${delta>=0?'var(--green)':'var(--red-d)'}">${delta>=0?'+':''}${nf(delta)} no período</div>`:''}</div>
+    </div>
+
+    <div class="res-grid">
+      <div class="rcard">
+        <h3>Por formato</h3>
+        ${byFmt.map(x=>`<div class="brk"><span class="bl">${x.f}</span><div class="bar"><i style="width:${Math.round(x.views/maxFmtViews*100)}%;background:${x.f==='Reels'?'#6B46C1':'#C13584'}"></i></div><span class="bv">${nf(x.views)} views</span></div><div style="font-size:11.5px;color:var(--muted);margin:-7px 0 12px 66px">${x.post}/${x.total} publicadas</div>`).join('')}
+        ${byFmt.every(x=>x.total===0)?'<div class="res-empty">Sem publicações no período.</div>':''}
+        <div style="font-size:11px;color:var(--muted-2);margin-top:2px">Stories não retornam views retroativos — registre manualmente se quiser.</div>
+      </div>
+      <div class="rcard">
+        <h3>Por equipe</h3>
+        ${byTeam.map(x=>`<div class="brk"><span class="bl">${x.t.split(' ')[0]}</span><div class="bar"><i style="width:${Math.round(x.total/maxTeam*100)}%;background:${teamColor[x.t]}"></i></div><span class="bv">${x.post}/${x.total}</span></div>`).join('')}
+        <div style="font-size:11.5px;color:var(--muted);margin-top:4px">publicadas / previstas</div>
+      </div>
+    </div>
+
+    <div class="res-grid" style="margin-top:14px">
+      <div class="rcard">
+        <h3>Mais vistas no período</h3>
+        ${top.length?top.map(p=>`<div class="toppost"><span class="chip fmt" style="flex:none">${esc(p.formato)}</span><span class="tt">${esc(p.titulo)}</span><span class="tv">${nf(p.views)}</span></div>`).join(''):'<div class="res-empty">Nenhuma visualização registrada ainda. Preencha as métricas na publicação (botão editar).</div>'}
+      </div>
+      <div class="rcard">
+        <h3>Seguidores</h3>
+        <div class="foll"><span class="big">${atual!=null?nf(atual):'—'}</span>${delta!=null?`<span class="delta" style="color:${delta>=0?'var(--green)':'var(--red-d)'}">${delta>=0?'+':''}${nf(delta)}</span>`:''}</div>
+        <div class="foll-note">${FOLLOWERS.length?('Último registro: '+FOLLOWERS[FOLLOWERS.length-1].data.split('-').reverse().join('/')):'Nenhum registro ainda.'}</div>
+        <button class="btn ghost sm" style="margin-top:12px" onclick="openFollowerModal()">${icoPlus()} Registrar seguidores de hoje</button>
+      </div>
+    </div>`;
+}
+
+function openFollowerModal(){
+  const last=FOLLOWERS.length?FOLLOWERS[FOLLOWERS.length-1].quantidade:'';
+  showOverlay(`<div class="modal" style="max-width:430px">
+    <div class="mhead"><div class="t">Registrar seguidores</div><button class="mclose" onclick="closeOverlay()">${icoX()}</button></div>
+    <div class="mbody">
+      <div class="frow">
+        <div class="field"><label>Data</label><input id="fData" type="date" value="${ymd(TODAY)}"></div>
+        <div class="field"><label>Nº de seguidores</label><input id="fQtd" type="number" inputmode="numeric" placeholder="Ex.: 4320" value="${last||''}"></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted)">Registre de tempos em tempos (ex.: toda segunda) para acompanhar o crescimento na aba Resultados.</div>
+    </div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeOverlay()">Cancelar</button><button class="btn" onclick="saveFollower()">Salvar</button></div>
+  </div>`);
+}
+function saveFollower(){
+  const data=$('#fData').value, q=parseInt($('#fQtd').value,10);
+  if(!data||!q){ toast('⚠️ Informe data e número',true); return; }
+  closeOverlay();
+  saving(async()=>{
+    await apiPost('addFollower',{data,quantidade:q});
+    const i=FOLLOWERS.findIndex(f=>f.data===data);
+    if(i>=0) FOLLOWERS[i].quantidade=q; else FOLLOWERS.push({data,quantidade:q});
+    FOLLOWERS.sort((a,b)=>a.data<b.data?-1:1);
+    renderResults();
+  },'Seguidores registrados ✓').catch(()=>{});
+}
+
+/* ---------------- Modal novo / editar ---------------- */
+function openPostModal(dateStr, editId){
+  const p = editId ? POSTS.find(x=>String(x.id)===String(editId)) : null;
+  const data = p ? p.data : dateStr;
+  const defTeam = p ? p.equipe : (teamOfDay(dateStr)==='ambas'?'Natal':teamOfDay(dateStr));
+  const opt=(v,cur)=>`<option ${v===cur?'selected':''}>${v}</option>`;
+  const av = p ? esc(p.titulo).replace(/"/g,'&quot;') : '';
+  showOverlay(`<div class="modal">
+    <div class="mhead"><div class="t">${p?'Editar publicação':'Nova publicação'}</div><button class="mclose" onclick="closeOverlay()">${icoX()}</button></div>
+    <div class="mbody">
+      <div class="field"><label>Título / descrição do conteúdo</label><input id="pTit" placeholder="Ex.: Reel — bastidores da produção" value="${av}"></div>
+      <div class="frow">
+        <div class="field"><label>Data</label><input id="pData" type="date" value="${data}"></div>
+        <div class="field"><label>Horário</label><input id="pHora" type="time" value="${p?esc(p.hora):'18:00'}"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Formato</label><select id="pFmt">${opt('Reels',p?p.formato:'Reels')}${opt('Stories',p?p.formato:'')}</select></div>
+        <div class="field"><label>Rede</label><select id="pRede">${opt('Instagram',p?p.rede:'Instagram')}</select></div>
+      </div>
+      <div class="field"><label>Equipe responsável</label><select id="pTeam">${opt('Natal',defTeam)}${opt('Cruzeta e Caicó',defTeam)}</select></div>
+      <div class="field"><label>Observações (opcional)</label><textarea id="pObs" rows="2" placeholder="Legenda, referência, link do material…">${p?esc(p.obs):''}</textarea></div>
+      <div class="field"><label>Link da publicação (após postar)</label><input id="pLink" type="url" placeholder="https://www.instagram.com/reel/..." value="${p?esc(p.link):''}"></div>
+      <div class="frow">
+        <div class="field"><label>Visualizações</label><input id="pViews" type="number" inputmode="numeric" placeholder="ex.: 3120" value="${p&&p.views?p.views:''}"></div>
+        <div class="field"><label>Alcance</label><input id="pReach" type="number" inputmode="numeric" placeholder="ex.: 2450" value="${p&&p.alcance?p.alcance:''}"></div>
+      </div>
+      <label class="checkline"><input type="checkbox" id="pDone" ${p&&p.postado?'checked':''}><span>Já foi postado</span></label>
+    </div>
+    <div class="mfoot">
+      <button class="btn ghost" onclick="closeOverlay()">Cancelar</button>
+      <button class="btn" onclick="savePost(${p?`'${p.id}'`:'null'})">${p?'Salvar alterações':'Agendar publicação'}</button>
+    </div>
+  </div>`);
+}
+
+function savePost(editId){
+  const obj={
+    id: editId || ('P-'+Date.now()),
+    data: $('#pData').value,
+    hora: $('#pHora').value,
+    titulo: ($('#pTit').value||'Publicação').trim(),
+    formato: $('#pFmt').value,
+    rede: $('#pRede').value,
+    equipe: $('#pTeam').value,
+    postado: $('#pDone').checked,
+    link: $('#pLink').value.trim(),
+    views: parseInt($('#pViews').value,10)||0,
+    alcance: parseInt($('#pReach').value,10)||0,
+    obs: $('#pObs').value.trim()
+  };
+  if(!obj.data){ toast('⚠️ Escolha a data',true); return; }
+  closeOverlay();
+  selDate=obj.data; const d=parseYmd(obj.data); viewY=d.getFullYear(); viewM=d.getMonth();
+  saving(async()=>{
+    if(editId){ await apiPost('updatePost',obj); const i=POSTS.findIndex(x=>String(x.id)===String(editId)); if(i>=0) POSTS[i]=obj; }
+    else{ await apiPost('addPost',obj); POSTS.push(obj); }
+    renderAll();
+  }, editId?'Publicação atualizada ✓':'Publicação agendada ✓').catch(()=>{});
+}
+
+function togglePost(id, novo){
+  const p=POSTS.find(x=>String(x.id)===String(id));
+  if(!p) return;
+  const old=p.postado; p.postado=novo; renderAll();
+  saving(async()=>{ await apiPost('togglePost',{id:p.id,postado:novo}); },
+    novo?'Marcado como postado ✓':'Marcado como pendente')
+    .catch(()=>{ p.postado=old; renderAll(); });
+}
+
+function deletePost(id){
+  const p=POSTS.find(x=>String(x.id)===String(id));
+  if(!p) return;
+  showOverlay(`<div class="modal" style="max-width:420px">
+    <div class="mhead"><div class="t">Excluir publicação</div><button class="mclose" onclick="closeOverlay()">${icoX()}</button></div>
+    <div class="mbody"><p style="font-size:13.5px;color:var(--ink-2)">Remover <b>“${esc(p.titulo)}”</b> de ${p.data.split('-').reverse().slice(0,2).join('/')}? Esta ação não pode ser desfeita.</p></div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeOverlay()">Cancelar</button>
+    <button class="btn" onclick="confirmDelete('${id}')">Excluir</button></div></div>`);
+}
+function confirmDelete(id){
+  closeOverlay();
+  saving(async()=>{ await apiPost('deletePost',{id}); POSTS=POSTS.filter(x=>String(x.id)!==String(id)); renderAll(); },'Publicação excluída').catch(()=>{});
+}
+
+/* ---------------- Overlay ---------------- */
+function showOverlay(html){const o=$('#overlay');o.innerHTML=html;o.classList.add('show');document.body.style.overflow='hidden';}
+function closeOverlay(){const o=$('#overlay');o.classList.remove('show');o.innerHTML='';if(!document.body.classList.contains('locked'))document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay();});
+
+/* ---------------- Ícones ---------------- */
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function icoCheck(s){s=s||14;return `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`;}
+function icoPlus(){return `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`;}
+function icoX(){return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#45464D" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>`;}
+function icoEdit(){return `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>`;}
+function icoTrash(){return `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>`;}
+function icoAlert(){return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>`;}
+function icoUsers(){return `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--muted)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 5.2a3 3 0 0 1 0 5.6M17 14.6c2.2.5 3.9 2.4 3.9 5"/></svg>`;}
+function chevL(){return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>`;}
+function chevR(){return `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>`;}
+
+/* ---------------- Init ---------------- */
+loadData();
+</script>
+</body>
+</html>
