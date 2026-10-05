@@ -321,10 +321,10 @@ function statusOf(p){
   return parseYmd(p.data) < TODAY ? 'atrasado' : 'agendado';
 }
 function teamOfDay(dateStr){
-  const wd = parseYmd(dateStr).getDay();
-  if(wd===1||wd===3||wd===5) return 'Natal';
-  if(wd===2||wd===4||wd===6) return 'Cruzeta e Caicó';
-  return 'ambas';
+  const wd = parseYmd(dateStr).getDay(); // 0 Dom ... 6 Sáb
+  if(wd===3||wd===5||wd===6) return 'Natal';           // Quarta, Sexta, Sábado
+  if(wd===1||wd===2||wd===4) return 'Cruzeta e Caicó'; // Segunda, Terça, Quinta
+  return 'ambas';                                      // Domingo
 }
 function teamChip(t){
   if(t==='Natal') return '<span class="chip natal">Natal</span>';
